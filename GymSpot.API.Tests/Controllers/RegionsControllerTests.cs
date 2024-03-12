@@ -142,16 +142,90 @@ namespace GymSpot.API.Tests.Controllers
         #endregion
 
         [Fact]
-        public void CreateRegion_InvalidAddRegionRequestDTO_ReturnsBadRequest()
+        public void CreateRegion_NullAddRegionRequestDTO_ReturnsBadRequest()
         {
             // arrange
             var regionDTO = (AddRegionRequestDTO)null;
 
-
             // act
             var result = regioncontroller.CreateRegion(regionDTO);
-            var obj = result.Result as OkObjectResult;
+
             // assert
+            Assert.IsType<BadRequestResult>(result.Result);
+        }
+
+        [Fact]
+        public void CreateRegion_EmptyNameAddRegionRequestDTO_ReturnsBadResponse()
+        {
+            // arrange
+            var regionDto = new AddRegionRequestDTO()
+            {
+                Name = "",
+                Code = "Code test"
+            };
+
+            // act
+            var result = regioncontroller.CreateRegion(regionDto);
+
+            // assert
+            Assert.IsType<BadRequestResult>(result.Result);
+
+        }
+
+        [Fact]
+        public void CreateRegion_EmptyCodeAddRegionRequestDTO_ReturnsBadResponse()
+        {
+            // arrange
+            var regionDto = new AddRegionRequestDTO()
+            {
+                Name = "Name test",
+                Code = ""
+            };
+
+            // act
+            var result = regioncontroller.CreateRegion(regionDto);
+
+            // assert
+            Assert.IsType<BadRequestResult>(result.Result);
+        }
+
+        [Fact]
+        public void CreateRegion_ValidRegion_ReturnsSuccess()
+        {
+            // arrange
+            var addRegionDto = new AddRegionRequestDTO()
+            {
+                Name = "Name test",
+                Code = "Code test"
+            };
+            var regionDto = new RegionDTO()
+            {
+                Id = new Guid("25466EA6-864D-4D73-9434-849BDF6B3D51"),
+                Name = "Name test",
+                Code = "Code test"
+            };
+            var region = new Region()
+            {
+                Id = new Guid("25466EA6-864D-4D73-9434-849BDF6B3D51"),
+                Name = "Name test",
+                Code = "Code test"
+            };
+
+
+
+
+
+            mockMapper.Setup(m => m.Map<Region>(It.IsAny<AddRegionRequestDTO>())).Returns(region);
+            mockRegionRepository.Setup(repo => repo.CreateAsync(region)).ReturnsAsync(region);
+            mockMapper.Setup(m => m.Map<RegionDTO>(It.IsAny<Region>())).Returns(regionDto);
+
+            // act
+            var result = regioncontroller.CreateRegion(addRegionDto);
+            var obj = result.Result as CreatedAtActionResult;
+
+            // assert
+            Assert.IsType<CreatedAtActionResult>(result.Result);
+            Assert.Equal(obj.Value, regionDto);
 
         }
     }

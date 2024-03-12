@@ -7,6 +7,13 @@ namespace GymSpot.API.Controllers
     [ApiController]
     public class ExerciseItemController : ControllerBase
     {
+
+        /*        [HttpPost]
+                public async IActionResult CreateExerciseItem(AddExerciseItemDTO addExerciseItemDTO)
+                {
+
+                }*/
+
         [HttpGet]
         public IActionResult GetAllExercises()
         {
