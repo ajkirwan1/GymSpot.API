@@ -35,6 +35,23 @@ namespace GymSpot.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Difficulties");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("ce99eb20-a50e-401a-a2ea-ce0065239cff"),
+                            Name = "Easy"
+                        },
+                        new
+                        {
+                            Id = new Guid("0effa98d-4d39-4896-bc75-456e21d7459f"),
+                            Name = "Medium"
+                        },
+                        new
+                        {
+                            Id = new Guid("6661afe2-11a6-43c1-a1ec-44273a01ebd8"),
+                            Name = "Hard"
+                        });
                 });
 
             modelBuilder.Entity("GymSpot.API.Models.Domain.ExerciseItem", b =>
@@ -62,6 +79,40 @@ namespace GymSpot.API.Migrations
                     b.HasIndex("DifficultyId");
 
                     b.ToTable("ExerciseItems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e2b54ae6-60f5-4718-994d-f380cd9daaf3"),
+                            BodyArea = "Upper",
+                            Description = "A great all-rounder",
+                            DifficultyId = new Guid("6661afe2-11a6-43c1-a1ec-44273a01ebd8"),
+                            Name = "Pull-up"
+                        },
+                        new
+                        {
+                            Id = new Guid("88cf4342-5f1c-4e29-9a0f-10c924913e60"),
+                            BodyArea = "Upper",
+                            Description = "A super upper body exercise",
+                            DifficultyId = new Guid("6661afe2-11a6-43c1-a1ec-44273a01ebd8"),
+                            Name = "Bench-press"
+                        },
+                        new
+                        {
+                            Id = new Guid("d4e49c0a-d227-421e-8e58-32ba9fc70e68"),
+                            BodyArea = "Upper",
+                            Description = "A super upper body exercise",
+                            DifficultyId = new Guid("6661afe2-11a6-43c1-a1ec-44273a01ebd8"),
+                            Name = "Bench-press"
+                        },
+                        new
+                        {
+                            Id = new Guid("e62e7403-307d-4c85-8d76-292c7d3923f5"),
+                            BodyArea = "Lower",
+                            Description = "A super upper body exercise",
+                            DifficultyId = new Guid("6661afe2-11a6-43c1-a1ec-44273a01ebd8"),
+                            Name = "Squat"
+                        });
                 });
 
             modelBuilder.Entity("GymSpot.API.Models.Domain.Region", b =>
@@ -81,6 +132,32 @@ namespace GymSpot.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Regions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e792ba02-0630-4512-8b47-1e4770ded925"),
+                            Code = "DOR",
+                            Name = "Dorset"
+                        },
+                        new
+                        {
+                            Id = new Guid("ae600fca-91f0-42f2-ac9f-3c0901fec94d"),
+                            Code = "HAM",
+                            Name = "Hampshire"
+                        },
+                        new
+                        {
+                            Id = new Guid("434fdcd7-2959-4325-aac8-7004e5088c7e"),
+                            Code = "LON",
+                            Name = "London"
+                        },
+                        new
+                        {
+                            Id = new Guid("e9d163dd-3085-4525-8033-febe455eb071"),
+                            Code = "WIL",
+                            Name = "Wiltshire"
+                        });
                 });
 
             modelBuilder.Entity("GymSpot.API.Models.Domain.User", b =>
@@ -98,7 +175,6 @@ namespace GymSpot.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PhoneNumber")
@@ -108,7 +184,6 @@ namespace GymSpot.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Role")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -116,6 +191,16 @@ namespace GymSpot.API.Migrations
                     b.HasIndex("RegionId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8505d655-067a-48a5-acf3-65deec25bb41"),
+                            Email = "AnEmail",
+                            Name = "Adam Smith",
+                            PhoneNumber = 0,
+                            RegionId = new Guid("434fdcd7-2959-4325-aac8-7004e5088c7e")
+                        });
                 });
 
             modelBuilder.Entity("GymSpot.API.Models.Domain.ExerciseItem", b =>

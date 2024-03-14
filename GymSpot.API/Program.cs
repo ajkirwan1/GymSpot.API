@@ -18,6 +18,7 @@ builder.Services.AddDbContext<GymSpotDbContext>(options =>
 });
 
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
+builder.Services.AddScoped<IUserRepository, SQLUserRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
