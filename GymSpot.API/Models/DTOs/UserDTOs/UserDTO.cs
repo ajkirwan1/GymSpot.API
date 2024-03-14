@@ -1,6 +1,4 @@
-﻿using GymSpot.API.Models.Domain;
-
-namespace GymSpot.API.Models.DTOs.UserDTOs
+﻿namespace GymSpot.API.Models.DTOs.UserDTOs
 {
     public class UserDTO
     {
@@ -10,7 +8,6 @@ namespace GymSpot.API.Models.DTOs.UserDTOs
         public string? Password { get; set; }
         public int PhoneNumber { get; set; }
         public string? Role { get; set; }
-        public Guid RegionId { get; set; }
-        public Region Region { get; set; }
+        public RegionDTO Region { get; set; }
     }
 }

@@ -45,6 +45,7 @@ namespace GymSpot.API.Tests.Controllers
         [Fact]
         public void GetAllRegions_List_ReturnsSuccess()
         {
+            // arrange
             var regionList = new List<Region>()
             {
                 new Region()
@@ -210,9 +211,6 @@ namespace GymSpot.API.Tests.Controllers
                 Name = "Name test",
                 Code = "Code test"
             };
-
-
-
 
 
             mockMapper.Setup(m => m.Map<Region>(It.IsAny<AddRegionRequestDTO>())).Returns(region);

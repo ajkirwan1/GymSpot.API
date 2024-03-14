@@ -69,6 +69,39 @@ namespace GymSpot.API.Controllers
 
             return Ok(userDto);
         }
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserDTO updateUserDTO)
+        {
+            var userEntity = _mapper.Map<User>(updateUserDTO);
 
+            var userDomain = await _userRepository.UpdateAsync(id, userEntity);
+
+            if (userDomain == null)
+            {
+                return NotFound();
+            }
+
+            var userDto = _mapper.Map<UserDTO>(userDomain);
+
+            return Ok(userDto);
+
+        }
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
+        {
+            var userEntity = await _userRepository.DeleteAsync(id);
+
+            if (userEntity == null)
+            {
+                return NotFound();
+            }
+
+            var regionDto = _mapper.Map<UserDTO>(userEntity);
+
+            return Ok(regionDto);
+
+        }
     }
 }
