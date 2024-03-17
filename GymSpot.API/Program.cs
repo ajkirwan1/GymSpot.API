@@ -1,4 +1,5 @@
 using GymSpot.API.Data;
+using GymSpot.API.ExtensionMethods;
 using GymSpot.API.Mappings;
 using GymSpot.API.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,8 @@ builder.Services.AddScoped<IUserRepository, SQLUserRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
+app.UseErrorHandlingMiddleware();
+app.UseRequestLogMiddleware();
 
 if (app.Environment.IsDevelopment())
 {
