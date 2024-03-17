@@ -27,6 +27,7 @@ namespace GymSpot.API.Controllers
         public async Task<IActionResult> GetAllRegionsAsync()
         {
             var regionsDomain = await _regionRepository.GetAllAsync();
+            throw new Exception("an error occured");
 
             if (regionsDomain.Count == 0)
             {
