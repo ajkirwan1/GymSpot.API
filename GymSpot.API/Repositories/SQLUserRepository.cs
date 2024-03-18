@@ -4,18 +4,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GymSpot.API.Repositories
 {
-    public class SQLUserRepository : IUserRepository
+    public class SQLUserRepository : GenericRepository<User>, IUserRepository
     {
         private readonly GymSpotDbContext _dbContext;
+        private readonly ILogger _logger;
 
-        public SQLUserRepository(GymSpotDbContext dbContext)
+        public SQLUserRepository(GymSpotDbContext dbContext, ILogger logger) : base(dbContext, logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
+
         }
         public async Task<User> CreateAsync(User user)
         {
             await _dbContext.Users.AddAsync(user);
-            await _dbContext.SaveChangesAsync();
+
             return user;
         }
 

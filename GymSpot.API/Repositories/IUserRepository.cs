@@ -1,16 +1,10 @@
 ﻿using GymSpot.API.Models.Domain;
+using GymSpot.API.Repositories.Interfaces;
 
 namespace GymSpot.API.Repositories
 {
-    public interface IUserRepository
+    public interface IUserRepository : IGenericRepository<User>
     {
-        Task<List<User>> GetAllAsync();
 
-        Task<User?> GetByIdAsync(Guid id);
-
-        Task<User> CreateAsync(User user);
-
-        Task<User?> UpdateAsync(Guid id, User user);
-        Task<User?> DeleteAsync(Guid id);
     }
 }

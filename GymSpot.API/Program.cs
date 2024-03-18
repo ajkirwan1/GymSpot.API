@@ -2,6 +2,7 @@ using GymSpot.API.Data;
 using GymSpot.API.ExtensionMethods;
 using GymSpot.API.Mappings;
 using GymSpot.API.Repositories;
+using GymSpot.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,8 +19,8 @@ builder.Services.AddDbContext<GymSpotDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GymSpotAPIConnectionString"));
 });
 
-builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
-builder.Services.AddScoped<IUserRepository, SQLUserRepository>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();

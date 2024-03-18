@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using GymSpot.API.Models.Domain;
 using GymSpot.API.Models.DTOs;
-using GymSpot.API.Repositories;
+using GymSpot.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,14 +11,12 @@ namespace GymSpot.API.Controllers
     [ApiController]
     public class RegionsController : ControllerBase
     {
-
-
-        private readonly IRegionRepository _regionRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public RegionsController(IRegionRepository regionRepository, IMapper mapper)
+        public RegionsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _regionRepository = regionRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -26,8 +24,7 @@ namespace GymSpot.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllRegionsAsync()
         {
-            var regionsDomain = await _regionRepository.GetAllAsync();
-            throw new Exception("an error occured");
+            var regionsDomain = await _unitOfWork.RegionRepository.GetAllAsync();
 
             if (regionsDomain.Count == 0)
             {
@@ -44,7 +41,7 @@ namespace GymSpot.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetRegionById([FromRoute] Guid id)
         {
-            var regionDomain = await _regionRepository.GetByIdAsync(id);
+            var regionDomain = await _unitOfWork.RegionRepository.GetByIdAsync(id);
 
             if (regionDomain == null)
             {
@@ -71,7 +68,9 @@ namespace GymSpot.API.Controllers
 
             var regionDomain = _mapper.Map<Region>(addRegionRequestDTO);
 
-            regionDomain = await _regionRepository.CreateAsync(regionDomain);
+            regionDomain = await _unitOfWork.RegionRepository.CreateAsync(regionDomain);
+
+            await _unitOfWork.Commit();
 
             var regionDto = _mapper.Map<RegionDTO>(regionDomain);
 
@@ -84,14 +83,16 @@ namespace GymSpot.API.Controllers
         {
             var region = _mapper.Map<Region>(updateRegionDTO);
 
-            var regionDomain = await _regionRepository.UpdateAsync(id, region);
+            var regionDomain = await _unitOfWork.RegionRepository.UpdateAsync(id, region);
+
+            await _unitOfWork.Commit();
 
             if (regionDomain == null)
             {
                 return NotFound();
             }
 
-            var regionDto = _mapper.Map<RegionDTO>(region);
+            var regionDto = _mapper.Map<RegionDTO>(regionDomain);
 
             return Ok(regionDto);
         }
@@ -100,7 +101,9 @@ namespace GymSpot.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> DeleteRegion([FromRoute] Guid id)
         {
-            var regionDomain = await _regionRepository.DeleteAsync(id);
+            var regionDomain = await _unitOfWork.RegionRepository.DeleteAsync(id);
+
+            await _unitOfWork.Commit();
 
             if (regionDomain == null)
             {

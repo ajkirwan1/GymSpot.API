@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using GymSpot.API.Models.Domain;
 using GymSpot.API.Models.DTOs.UserDTOs;
-using GymSpot.API.Repositories;
+using GymSpot.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,19 +11,19 @@ namespace GymSpot.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UsersController(IUserRepository userRepository, IMapper mapper)
+        public UsersController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            var userEntity = await _userRepository.GetAllAsync();
+            var userEntity = await _unitOfWork.UserRepository.GetAllAsync();
 
             if (userEntity.Count == 0)
             {
@@ -38,7 +38,9 @@ namespace GymSpot.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetUserById([FromRoute] Guid id)
         {
-            var userEntity = await _userRepository.GetByIdAsync(id);
+            var userEntity = await _unitOfWork.UserRepository.GetByIdAsync(id);
+
+            await _unitOfWork.Commit();
 
             if (userEntity == null)
             {
@@ -63,7 +65,9 @@ namespace GymSpot.API.Controllers
 
             var userEntity = _mapper.Map<User>(addUserRequestDTO);
 
-            userEntity = await _userRepository.CreateAsync(userEntity);
+            userEntity = await _unitOfWork.UserRepository.CreateAsync(userEntity);
+
+            await _unitOfWork.Commit();
 
             var userDto = _mapper.Map<UserDTO>(userEntity);
 
@@ -75,7 +79,9 @@ namespace GymSpot.API.Controllers
         {
             var userEntity = _mapper.Map<User>(updateUserDTO);
 
-            var userDomain = await _userRepository.UpdateAsync(id, userEntity);
+            var userDomain = await _unitOfWork.UserRepository.UpdateAsync(id, userEntity);
+
+            await _unitOfWork.Commit();
 
             if (userDomain == null)
             {
@@ -91,7 +97,9 @@ namespace GymSpot.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
         {
-            var userEntity = await _userRepository.DeleteAsync(id);
+            var userEntity = await _unitOfWork.UserRepository.DeleteAsync(id);
+
+            await _unitOfWork.Commit();
 
             if (userEntity == null)
             {
