@@ -32,7 +32,7 @@ namespace GymSpot.API.Repositories
             }
 
             _dbContext.Users.Remove(userDomain);
-            await _dbContext.SaveChangesAsync();
+            /*  await _dbContext.SaveChangesAsync();*/
 
             return userDomain;
         }
@@ -40,7 +40,6 @@ namespace GymSpot.API.Repositories
         public async Task<List<User>> GetAllAsync()
         {
             var users = await _dbContext.Users.Include(x => x.Region).ToListAsync();
-
             return users;
         }
 
@@ -67,7 +66,7 @@ namespace GymSpot.API.Repositories
             userEntity.Role = updatedUser.Role;
             userEntity.RegionId = updatedUser.RegionId;
 
-            await _dbContext.SaveChangesAsync();
+            /*    await _dbContext.SaveChangesAsync();*/
 
             return userEntity;
 

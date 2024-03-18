@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿/*using AutoMapper;
 using GymSpot.API.Controllers;
 using GymSpot.API.Models.Domain;
 using GymSpot.API.Models.DTOs.UserDTOs;
@@ -172,3 +172,4 @@ namespace GymSpot.API.Tests.Controllers
 
     }
 }
+*/

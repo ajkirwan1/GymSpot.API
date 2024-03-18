@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using GymSpot.API.Filters;
 using GymSpot.API.Models.Domain;
 using GymSpot.API.Models.DTOs;
 using GymSpot.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace GymSpot.API.Controllers
 {
@@ -20,11 +20,11 @@ namespace GymSpot.API.Controllers
             _mapper = mapper;
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> GetAllRegionsAsync()
+        public async Task<IActionResult> GetAllRegionsAsync([FromQuery] string? filteredOn, [FromQuery] string? filterQuery,
+            [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 100)
         {
-            var regionsDomain = await _unitOfWork.RegionRepository.GetAllAsync();
+            var regionsDomain = await _unitOfWork.RegionRepository.GetAllAsync(filteredOn, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize);
 
             if (regionsDomain.Count == 0)
             {
@@ -35,7 +35,6 @@ namespace GymSpot.API.Controllers
 
             return Ok(regionsDtoList);
         }
-
 
         [HttpGet]
         [Route("{id:Guid}")]
@@ -54,18 +53,9 @@ namespace GymSpot.API.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> CreateRegion([FromBody] AddRegionRequestDTO addRegionRequestDTO)
         {
-            if (addRegionRequestDTO == null)
-            {
-                return BadRequest();
-            }
-
-            if (addRegionRequestDTO.Name.IsNullOrEmpty() || addRegionRequestDTO.Code.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
-
             var regionDomain = _mapper.Map<Region>(addRegionRequestDTO);
 
             regionDomain = await _unitOfWork.RegionRepository.CreateAsync(regionDomain);
@@ -75,9 +65,10 @@ namespace GymSpot.API.Controllers
             var regionDto = _mapper.Map<RegionDTO>(regionDomain);
 
             return CreatedAtAction(nameof(GetRegionById), new { id = regionDto.Id }, regionDto);
-
         }
+
         [HttpPut]
+        [ValidateModel]
         [Route("{id:Guid}")]
         public async Task<IActionResult> UpdateRegion([FromRoute] Guid id, [FromBody] UpdateRegionDTO updateRegionDTO)
         {

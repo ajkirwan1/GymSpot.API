@@ -37,19 +37,35 @@ namespace GymSpot.API.Repositories
             return regionDomain;
         }
 
-        public override async Task<List<Region>?> GetAllAsync()
+        public async Task<List<Region>> GetAllAsync(string? filterOn = null, string? filterQuery = null,
+            string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 100)
         {
-            try
+            var regions = _dbContext.Regions.AsQueryable();
+            // filtering
+            if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
             {
-                var regions = await _dbContext.Regions.ToListAsync();
 
-                return regions;
+                if (filterOn.Equals(nameof(Region.Name), StringComparison.OrdinalIgnoreCase))
+                {
+                    regions = regions.Where(x => x.Name.Contains(filterQuery));
+                }
             }
-            catch (Exception ex)
+
+            // sorting
+            if (!string.IsNullOrWhiteSpace(sortBy))
             {
-                _logger.LogError(ex, "{Repo} GetAllAsync error occured", typeof(SQLRegionRepository));
-                return null;
+                if (sortBy.Equals(nameof(Region.Name), StringComparison.OrdinalIgnoreCase))
+                {
+                    regions = isAscending ? regions.OrderBy(x => x.Name) : regions.OrderByDescending(x => x.Name);
+                }
             }
+
+            // pagination
+            var skipResults = (pageNumber - 1) * pageSize;
+
+            var regionsResults = regions.Skip(skipResults).Take(pageSize).ToListAsync();
+
+            return await regionsResults;
         }
 
         public override async Task<Region?> GetByIdAsync(Guid id)
