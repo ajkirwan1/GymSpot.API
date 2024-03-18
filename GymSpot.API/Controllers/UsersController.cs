@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using GymSpot.API.Filters;
 using GymSpot.API.Models.Domain;
 using GymSpot.API.Models.DTOs.UserDTOs;
 using GymSpot.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace GymSpot.API.Controllers
 {
@@ -52,16 +52,9 @@ namespace GymSpot.API.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> CreateUser([FromBody] AddUserRequestDTO addUserRequestDTO)
         {
-            if (addUserRequestDTO == null)
-            {
-                return BadRequest();
-            }
-            if (addUserRequestDTO.Name.IsNullOrEmpty() || addUserRequestDTO.Password.IsNullOrEmpty() || addUserRequestDTO.Email.IsNullOrEmpty() || addUserRequestDTO.Role.IsNullOrEmpty())
-            {
-                return BadRequest();
-            };
 
             var userEntity = _mapper.Map<User>(addUserRequestDTO);
 
@@ -72,8 +65,10 @@ namespace GymSpot.API.Controllers
             var userDto = _mapper.Map<UserDTO>(userEntity);
 
             return Ok(userDto);
+
         }
         [HttpPut]
+        [ValidateModel]
         [Route("{id:Guid}")]
         public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserDTO updateUserDTO)
         {
@@ -91,8 +86,8 @@ namespace GymSpot.API.Controllers
             var userDto = _mapper.Map<UserDTO>(userDomain);
 
             return Ok(userDto);
-
         }
+
         [HttpDelete]
         [Route("{id:Guid}")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
