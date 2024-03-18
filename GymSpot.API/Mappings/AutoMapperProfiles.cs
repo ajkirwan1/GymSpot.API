@@ -13,11 +13,11 @@ namespace GymSpot.API.Mappings
             // Regions mappings
             CreateMap<RegionDTO, Region>().ReverseMap();
             CreateMap<AddRegionRequestDTO, Region>().ReverseMap();
-            // need an UpdateRegionDTO map
+            CreateMap<UpdateRegionDTO, Region>().ReverseMap();
 
             /*CreateMap<UserDTO, User>().ForMember(x => x.Name, opt => opt.MapFrom(x => x.FullName));*/
 
-            // User mappings
+            // Users mappings
             CreateMap<UserDTO, User>().ReverseMap();
             CreateMap<AddUserRequestDTO, User>().ReverseMap();
             CreateMap<UpdateUserDTO, User>().ReverseMap();

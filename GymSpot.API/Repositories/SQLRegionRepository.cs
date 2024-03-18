@@ -4,24 +4,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GymSpot.API.Repositories
 {
-    public class SQLRegionRepository : IRegionRepository
+    public class SQLRegionRepository : GenericRepository<Region>, IRegionRepository
     {
         private readonly GymSpotDbContext _dbContext;
+        private readonly ILogger _logger;
 
-        public SQLRegionRepository(GymSpotDbContext dbContext)
+        public SQLRegionRepository(GymSpotDbContext dbContext, ILogger logger) : base(dbContext, logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
-        public async Task<Region> CreateAsync(Region region)
+        public override async Task<Region> CreateAsync(Region region)
         {
             await _dbContext.Regions.AddAsync(region);
-            await _dbContext.SaveChangesAsync();
+
             return region;
         }
 
-        public async Task<Region?> DeleteAsync(Guid id)
+        public override async Task<Region?> DeleteAsync(Guid id)
         {
+
             var regionDomain = await _dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
 
             if (regionDomain == null)
@@ -30,26 +33,33 @@ namespace GymSpot.API.Repositories
             }
 
             _dbContext.Regions.Remove(regionDomain);
-            await _dbContext.SaveChangesAsync();
 
             return regionDomain;
         }
 
-        public async Task<List<Region>> GetAllAsync()
+        public override async Task<List<Region>?> GetAllAsync()
         {
-            var regions = await _dbContext.Regions.ToListAsync();
+            try
+            {
+                var regions = await _dbContext.Regions.ToListAsync();
 
-            return regions;
+                return regions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Repo} GetAllAsync error occured", typeof(SQLRegionRepository));
+                return null;
+            }
         }
 
-        public async Task<Region?> GetByIdAsync(Guid id)
+        public override async Task<Region?> GetByIdAsync(Guid id)
         {
             var region = await _dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
 
             return region;
         }
 
-        public async Task<Region?> UpdateAsync(Guid id, Region region)
+        public override async Task<Region?> UpdateAsync(Guid id, Region region)
         {
             var regionDomain = await _dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -57,10 +67,9 @@ namespace GymSpot.API.Repositories
             {
                 return null;
             }
+
             regionDomain.Code = region.Code;
             regionDomain.Name = region.Name;
-
-            await _dbContext.SaveChangesAsync();
 
             return regionDomain;
 
